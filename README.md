@@ -45,7 +45,7 @@ A NiFi cluster is comprised of one or more NiFi Nodes (Node) controlled by a sin
 ![Screenshot 1](https://s31.postimg.org/5xqm4vs4r/nifi4.png)
 
 
-# Screenshots
+#### Screenshots
 Project's dataflow NiFi UI schema representation:
 ![Screenshot 2] (https://s32.postimg.org/piy6f5zn9/nifi1.png)
 
