@@ -20,6 +20,7 @@ Resulting files on HDFS under partitioned directory:
 
 ### S3ToKafkaDataflow
 S3ToKafkaDataflow fetches data from Amazon S3 based on notifications that are sent to Amazon SQS.
+
 NiFi doesn't provide interface for direct retreiving files from S3 bucket, as "Get" operation requires directory listing, and S3 Bucket could contain huge amount of files, it would be very expensive to list all files from bucket. So approach of retreiveing only new files from bucket is used.
 
 The dataflow is quite simple: we configure notification that is triggered when new files are being added to our Amazon S3 bucket. After some event occurs, SQS adds info about this event to it's queue. NiFi detects changes in SQS queue and gets whole event data that is in Json format. Then it extracts necessary field (object key) and fetches appropriate object from S3. Then object is being splitted by lines into messages and sent to Kafka.
