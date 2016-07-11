@@ -1,6 +1,19 @@
 # NiFiDataflows
 **NiFiDataflows** is a project that automates dataflow processing and data transmission between systems using [Apache NiFi](https://nifi.apache.org/) product.
 
+### DataDogReportingTask
+Custom NiFi module that makes possible sending reporting info about processors activities to DataDog service.
+
+In order to use this module, you have to perform following actions:
+- Make sure DataDog agent is installed
+- Clone DataDogReportingTask submodule
+- Build it with `mvn clean package`
+- Put .NAR file from `nifi-datadog-nar/target` to NiFi installation directory `lib` folder
+- Execute command `bin/nifi.sh stop` and then `bin/nifi.sh start`
+- Add and launch DataDogReportingTask from reporting tasks menu
+- Metrics should appear in DataDog dashboard
+
+
 ### KafkaToHDFSDataflow
 KafkaToHDFSDataflow performs data transmission between Apache Kafka and HDFS.
 
