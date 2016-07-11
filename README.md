@@ -13,6 +13,11 @@ In order to use this module, you have to perform following actions:
 - Add and launch DataDogReportingTask from reporting tasks menu
 - Metrics should appear in DataDog dashboard
 
+Adding DataDogReportingTask to NiFi dataflow
+![Screenshot 4](https://s32.postimg.org/5e25zuaqd/Screenshot_at_Jul_11_17_50_03.png)
+
+Metrics visualization in DataDog dashboard
+![Screenshot 5](https://s32.postimg.org/j90gib55h/Screenshot_at_Jul_11_17_47_57.png)
 
 ### KafkaToHDFSDataflow
 KafkaToHDFSDataflow performs data transmission between Apache Kafka and HDFS.
