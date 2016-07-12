@@ -39,7 +39,7 @@ public class DDMetricRegistryBuilder {
         return this;
     }
 
-    public DDMetricRegistryBuilder setName(List<String> tags) {
+    public DDMetricRegistryBuilder setTags(List<String> tags) {
         this.tags = tags;
         return this;
     }
