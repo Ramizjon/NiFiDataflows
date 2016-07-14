@@ -1,0 +1,22 @@
+*.zip
+**/*.iml
+**/classes/
+**/*.class
+**/*.yml
+**/*.gitkeep
+**/target
+**/.gradle
+build
+.project
+.settings
+.classpath
+.idea/
+**/*.sh
+**/*.ipr
+**/*.iws
+**/gradle-wrapper.properties
+gradlew.bat
+
+ #Eclipse Core
+ .project
+/bin/
