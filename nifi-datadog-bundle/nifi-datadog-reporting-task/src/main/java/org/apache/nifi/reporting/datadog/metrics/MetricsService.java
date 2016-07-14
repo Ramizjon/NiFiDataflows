@@ -42,7 +42,24 @@ public class MetricsService {
         return metrics;
     }
 
-    //virtual machine metrics
+
+    //general metrics for whole dataflow
+    public Map<String,String> getDataFlowMetrics(ProcessGroupStatus status) {
+        final Map<String, String> metrics = new HashMap<>();
+        metrics.put(MetricNames.FLOW_FILES_RECEIVED, String.valueOf(status.getFlowFilesReceived()));
+        metrics.put(MetricNames.BYTES_RECEIVED, String.valueOf(status.getBytesReceived()));
+        metrics.put(MetricNames.FLOW_FILES_SENT, String.valueOf(status.getFlowFilesSent()));
+        metrics.put(MetricNames.BYTES_SENT, String.valueOf(status.getBytesSent()));
+        metrics.put(MetricNames.FLOW_FILES_QUEUED, String.valueOf(status.getQueuedCount()));
+        metrics.put(MetricNames.BYTES_QUEUED, String.valueOf(status.getQueuedContentSize()));
+        metrics.put(MetricNames.BYTES_READ, String.valueOf(status.getBytesRead()));
+        metrics.put(MetricNames.BYTES_WRITTEN, String.valueOf(status.getBytesWritten()));
+        metrics.put(MetricNames.ACTIVE_THREADS, String.valueOf(status.getActiveThreadCount()));
+        metrics.put(MetricNames.TOTAL_TASK_DURATION, String.valueOf(calculateProcessingNanos(status)));
+        return metrics;
+    }
+
+        //virtual machine metrics
     public Map<String, String> getJVMMetrics(VirtualMachineMetrics virtualMachineMetrics) {
         final Map<String, String> metrics = new HashMap<>();
         metrics.put(MetricNames.JVM_UPTIME, String.valueOf(virtualMachineMetrics.uptime()));

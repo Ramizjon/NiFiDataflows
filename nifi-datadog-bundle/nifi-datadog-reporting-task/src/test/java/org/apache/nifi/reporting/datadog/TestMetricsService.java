@@ -41,12 +41,32 @@ public class TestMetricsService {
         processorStatuses.add(procStatus);
         status.setProcessorStatus(processorStatuses);
 
-        final Map<String,String> metrics = metricsService.getProcessorMetrics(procStatus);
+        final Map<String,String> metrics = metricsService.getDataFlowMetrics(status);
 
         Assert.assertTrue(metrics.containsKey(MetricNames.FLOW_FILES_RECEIVED));
+        Assert.assertTrue(metrics.containsKey(MetricNames.BYTES_RECEIVED));
         Assert.assertTrue(metrics.containsKey(MetricNames.FLOW_FILES_SENT));
+        Assert.assertTrue(metrics.containsKey(MetricNames.BYTES_SENT));
+        Assert.assertTrue(metrics.containsKey(MetricNames.FLOW_FILES_QUEUED));
+        Assert.assertTrue(metrics.containsKey(MetricNames.BYTES_QUEUED));
         Assert.assertTrue(metrics.containsKey(MetricNames.BYTES_READ));
         Assert.assertTrue(metrics.containsKey(MetricNames.BYTES_WRITTEN));
+        Assert.assertTrue(metrics.containsKey(MetricNames.ACTIVE_THREADS));
+    }
+
+    @Test
+    public void testGetProcessorGroupStatusMetrics() {
+        ProcessorStatus procStatus = new ProcessorStatus();
+        List<ProcessorStatus> processorStatuses = new ArrayList<>();
+        processorStatuses.add(procStatus);
+        status.setProcessorStatus(processorStatuses);
+
+        final Map<String,String> metrics = metricsService.getProcessorMetrics(procStatus);
+
+        Assert.assertTrue(metrics.containsKey(MetricNames.BYTES_READ));
+        Assert.assertTrue(metrics.containsKey(MetricNames.BYTES_WRITTEN));
+        Assert.assertTrue(metrics.containsKey(MetricNames.FLOW_FILES_RECEIVED));
+        Assert.assertTrue(metrics.containsKey(MetricNames.FLOW_FILES_SENT));
         Assert.assertTrue(metrics.containsKey(MetricNames.ACTIVE_THREADS));
     }
 

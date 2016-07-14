@@ -79,11 +79,12 @@ public class DataDogReportingTask extends AbstractReportingTask {
         }
         updateMetrics(metricsService.getJVMMetrics(virtualMachineMetrics),
                 Optional.<String>absent());
+        updateMetrics(metricsService.getDataFlowMetrics(status), Optional.<String>absent());
     }
 
     protected void updateMetrics(Map<String, String> metrics, Optional<String> processorName) {
         for (Map.Entry<String, String> entry : metrics.entrySet()) {
-            final String metricName = "nifi." + processorName.or("flow") + "." + entry.getKey();
+        final String metricName = buildMetricName(processorName, entry.getKey());
             logger.info(metricName + ": " + entry.getValue());
             if (!metricsMap.containsKey(metricName)) {
                 metricsMap.put(metricName, new AtomicDouble(Double.parseDouble(entry.getValue())));
@@ -103,6 +104,10 @@ public class DataDogReportingTask extends AbstractReportingTask {
         for (final ProcessGroupStatus childGroupStatus : groupStatus.getProcessGroupStatus()) {
             populateProcessorStatuses(childGroupStatus, statuses);
         }
+    }
+
+    private String buildMetricName(Optional<String> processorName, String metricName) {
+        return "nifi." + processorName.or("flow") + "." + metricName;
     }
 
     protected MetricsService getMetricsService() {
