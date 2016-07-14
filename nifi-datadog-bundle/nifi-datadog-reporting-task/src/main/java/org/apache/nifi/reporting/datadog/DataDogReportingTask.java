@@ -81,7 +81,7 @@ public class DataDogReportingTask extends AbstractReportingTask {
                 Optional.<String>absent());
     }
 
-    private void updateMetrics(Map<String, String> metrics, Optional<String> processorName) {
+    protected void updateMetrics(Map<String, String> metrics, Optional<String> processorName) {
         for (Map.Entry<String, String> entry : metrics.entrySet()) {
             final String metricName = "nifi." + processorName.or("flow") + "." + entry.getKey();
             logger.info(metricName + ": " + entry.getValue());
