@@ -13,13 +13,12 @@ import org.apache.nifi.components.PropertyDescriptor;
 import org.apache.nifi.controller.ConfigurationContext;
 import org.apache.nifi.controller.status.ProcessGroupStatus;
 import org.apache.nifi.controller.status.ProcessorStatus;
+import org.apache.nifi.logging.ComponentLog;
 import org.apache.nifi.processor.util.StandardValidators;
 import org.apache.nifi.reporting.AbstractReportingTask;
 import org.apache.nifi.reporting.ReportingContext;
 import org.apache.nifi.reporting.datadog.metrics.MetricsService;
 import org.coursera.metrics.datadog.DynamicTagsCallback;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,16 +30,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Tags({"reporting", "datadog", "metrics"})
 @CapabilityDescription("Publishes metrics from NiFi to datadog")
 public class DataDogReportingTask extends AbstractReportingTask {
-
-    //the amount of time between polls
-    static final PropertyDescriptor REPORTING_PERIOD = new PropertyDescriptor.Builder()
-            .name("DataDog reporting period")
-            .description("The amount of time in seconds between polls")
-            .required(true)
-            .expressionLanguageSupported(false)
-            .defaultValue("10")
-            .addValidator(StandardValidators.LONG_VALIDATOR)
-            .build();
 
     static final PropertyDescriptor METRICS_PREFIX = new PropertyDescriptor.Builder()
             .name("Metrics prefix")
@@ -69,7 +58,6 @@ public class DataDogReportingTask extends AbstractReportingTask {
     private String statusId;
     private ConcurrentHashMap<String, AtomicDouble> metricsMap;
     private volatile VirtualMachineMetrics virtualMachineMetrics;
-    private Logger logger = LoggerFactory.getLogger(getClass().getName());
 
     @OnScheduled
     public void setup(final ConfigurationContext context) throws IOException {
@@ -89,7 +77,6 @@ public class DataDogReportingTask extends AbstractReportingTask {
     @Override
     protected List<PropertyDescriptor> getSupportedPropertyDescriptors() {
         final List<PropertyDescriptor> properties = new ArrayList<>();
-        properties.add(REPORTING_PERIOD);
         properties.add(METRICS_PREFIX);
         properties.add(ENVIRONMENT);
         return properties;
@@ -98,16 +85,11 @@ public class DataDogReportingTask extends AbstractReportingTask {
     @Override
     public void onTrigger(ReportingContext context) {
         final ProcessGroupStatus status = context.getEventAccess().getControllerStatus();
-        final String reportingPeriod = context.getProperty(REPORTING_PERIOD)
-                .evaluateAttributeExpressions().getValue();
-        metricsPrefix = context.getProperty(METRICS_PREFIX)
-                .evaluateAttributeExpressions().getValue();
-        environment = context.getProperty(ENVIRONMENT)
-                .evaluateAttributeExpressions().getValue();
+        metricsPrefix = context.getProperty(METRICS_PREFIX).getValue();
+        environment = context.getProperty(ENVIRONMENT).getValue();
         statusId = status.getId();
         final List<ProcessorStatus> processorStatuses = new ArrayList<>();
         populateProcessorStatuses(status, processorStatuses);
-        ddMetricRegistryBuilder.setInterval(Long.parseLong(reportingPeriod));
         for (final ProcessorStatus processorStatus : processorStatuses) {
             updateMetrics(metricsService.getProcessorMetrics(processorStatus),
                     Optional.of(processorStatus.getName()));
@@ -115,13 +97,14 @@ public class DataDogReportingTask extends AbstractReportingTask {
         updateMetrics(metricsService.getJVMMetrics(virtualMachineMetrics),
                 Optional.<String>absent());
         updateMetrics(metricsService.getDataFlowMetrics(status), Optional.<String>absent());
+        //report all metrics to DataDog
+        ddMetricRegistryBuilder.getDatadogReporter().report();
     }
 
 
     protected void updateMetrics(Map<String, String> metrics, Optional<String> processorName) {
         for (Map.Entry<String, String> entry : metrics.entrySet()) {
             final String metricName = buildMetricName(processorName, entry.getKey());
-            logger.info(metricName + ": " + entry.getValue());
             //if metric is not registered yet - register it
             if (!metricsMap.containsKey(metricName)) {
                 metricsMap.put(metricName, new AtomicDouble(Double.parseDouble(entry.getValue())));
