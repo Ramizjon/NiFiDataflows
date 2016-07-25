@@ -16,18 +16,11 @@ import java.util.concurrent.TimeUnit;
  */
 public class DDMetricRegistryBuilder {
 
-    private long interval = 10;
 
     private MetricRegistry metricRegistry = null;
-
     private String name = null;
-
     private List<String> tags = Arrays.asList();
-
-    public DDMetricRegistryBuilder setInterval(long interval) {
-        this.interval = interval;
-        return this;
-    }
+    private DatadogReporter datadogReporter;
 
     public DDMetricRegistryBuilder setMetricRegistry(MetricRegistry metricRegistry) {
         this.metricRegistry = metricRegistry;
@@ -44,6 +37,10 @@ public class DDMetricRegistryBuilder {
         return this;
     }
 
+    public DatadogReporter getDatadogReporter() {
+        return datadogReporter;
+    }
+
     public MetricRegistry build() throws IOException {
         if(metricRegistry == null)
             metricRegistry = new MetricRegistry();
@@ -51,9 +48,7 @@ public class DDMetricRegistryBuilder {
         if(name==null) {
             name = RandomStringUtils.randomAlphanumeric(8);
         }
-        DatadogReporter datadogReporter = createDatadogReporter(this.metricRegistry);
-        datadogReporter.start(this.interval, TimeUnit.SECONDS);
-
+        datadogReporter = createDatadogReporter(this.metricRegistry);
         return this.metricRegistry;
     }
 

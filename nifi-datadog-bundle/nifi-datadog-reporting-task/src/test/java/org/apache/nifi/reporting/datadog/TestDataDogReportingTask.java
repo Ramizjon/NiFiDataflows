@@ -58,8 +58,6 @@ public class TestDataDogReportingTask {
     private void initContexts() {
         configurationContext = Mockito.mock(ConfigurationContext.class);
         context = Mockito.mock(ReportingContext.class);
-        Mockito.when(context.getProperty(DataDogReportingTask.REPORTING_PERIOD))
-                .thenReturn(new MockPropertyValue(reportingPeriod, null));
         Mockito.when(context.getProperty(DataDogReportingTask.ENVIRONMENT))
                 .thenReturn(new MockPropertyValue(env, null));
         Mockito.when(context.getProperty(DataDogReportingTask.METRICS_PREFIX))
